@@ -1,0 +1,58 @@
+- name: Run domain integration tests
+  block:
+    - name: Create a Linode domain
+      linode.cloud.domain:
+        api_token: '{{ api_token }}'
+        domain: 'ansible-test-{{ ansible_date_time.epoch }}.com'
+        soa_email: 'ansible-test@aaaaaaaaaaaaaa.com'
+        ttl_sec: 300
+        type: master
+        state: present
+      register: create
+
+    - name: Assert domain created
+      assert:
+        that:
+          - create.changed
+          - create.domain.soa_email == 'ansible-test@aaaaaaaaaaaaaa.com'
+          - create.domain.ttl_sec == 300
+
+    - name: Ensure domain exists
+      linode.cloud.domain:
+        api_token: '{{ api_token }}'
+        domain: '{{ create.domain.domain }}'
+        soa_email: '{{ create.domain.soa_email }}'
+        ttl_sec: 300
+        type: master
+        state: present
+      register: no_update
+
+    - name: Update the domain
+      linode.cloud.domain:
+        api_token: '{{ api_token }}'
+        domain: '{{ create.domain.domain }}'
+        soa_email: 'ansible-test@aaaaaaaaaaaaaa.com'
+        ttl_sec: 3600
+        type: master
+        state: present
+      register: update
+
+    - name: Assert domain updated
+      assert:
+        that:
+          - update.changed
+          - update.domain.ttl_sec == 3600
+
+  always:
+    - name: Delete a Linode domain
+      linode.cloud.domain:
+        api_token: '{{ api_token }}'
+        domain: '{{ create.domain.domain }}'
+        state: absent
+      register: delete
+
+    - name: Assert domain delete succeeded
+      assert:
+        that:
+          - delete.changed
+          - delete.domain.id == create.domain.id
