@@ -27,6 +27,11 @@
         state: present
       register: no_update
 
+    - name: Assert domain not updated
+      assert:
+        that:
+          - no_update.changed == false
+
     - name: Update the domain
       linode.cloud.domain:
         api_token: '{{ api_token }}'
@@ -42,6 +47,31 @@
         that:
           - update.changed
           - update.domain.ttl_sec == 3600
+
+    - name: Get info about the domain
+      linode.cloud.domain_info:
+        api_token: '{{ api_token }}'
+        domain: '{{ create.domain.domain }}'
+      register: info_domain
+
+    - name: Assert info is correct
+      assert:
+        that:
+          - info_domain.domain.type == 'master'
+          - info_domain.domain.ttl_sec == 3600
+
+    - name: Get info about the domain by id
+      linode.cloud.domain_info:
+        api_token: '{{ api_token }}'
+        id: '{{ create.domain.id }}'
+      register: info_id
+
+    - name: Assert info is correct
+      assert:
+        that:
+          - info_id.domain.domain == create.domain.domain
+          - info_id.domain.type == 'master'
+          - info_id.domain.ttl_sec == 3600
 
   always:
     - name: Delete a Linode domain

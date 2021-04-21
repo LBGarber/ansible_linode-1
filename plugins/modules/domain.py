@@ -40,7 +40,7 @@ linode_domain_spec = dict(
     ttl_sec=dict(type='int'),
 
     # Label should be ignored in this context
-    label=dict(type='str', required=False)
+    label=dict(type='str')
 )
 
 class LinodeDomain(LinodeModuleBase):
