@@ -35,7 +35,6 @@
       assert:
         that:
           - create_nopass.changed
-          - create_nopass.instance.status == 'provisioning'
           - create_nopass.instance.ipv4|length > 1
 
     - name: Get info about the instance by id
@@ -114,7 +113,6 @@
       assert:
         that:
           - create_interface.changed
-          - create_interface.instance.status == 'provisioning'
           - create_interface.instance.ipv4|length > 1
 
           - create_interface.configs[0].interfaces[0].purpose == 'vlan'
