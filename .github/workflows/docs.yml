@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout repo
-        uses: actions/checkout@f1d3225b5376a0791fdee5a0e8eac5289355e43a # pin@v2
+        uses: actions/checkout@v2 # pin@v2
 
       - name: update packages
         run: sudo apt-get update -y
