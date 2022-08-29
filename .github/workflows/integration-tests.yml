@@ -44,7 +44,7 @@ jobs:
         run: cp -r scripts ~/.ansible/collections/ansible_collections/linode/cloud/scripts
 
       - name: generate test key pair
-        run: ssh-keygen -m PEM -t rsa -N '' -f "$HOME"/.ansible/test/id_rsa
+        run: mkdir -p "$HOME"/.ansible/test/id_rsa && ssh-keygen -m PEM -t rsa -N '' -f "$HOME"/.ansible/test/id_rsa
 
       - name: run tests
         run: cd ~/.ansible/collections/ansible_collections/linode/cloud && make testall
